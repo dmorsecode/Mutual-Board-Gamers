@@ -19,6 +19,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+<<<<<<< HEAD
   <ItemGroup>
     <ClInclude Include="indicators\block_progress_bar.hpp">
       <Filter>Header Files</Filter>
@@ -27,4 +28,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+=======
+>>>>>>> dcad23c202b6b65ccb5705495a16e24460dc70b7
 </Project>
