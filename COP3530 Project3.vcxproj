@@ -135,10 +135,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="COP3530 Project3.cpp" />
+    <ClCompile Include="mbg\ReviewList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="indicators\block_progress_bar.hpp" />
     <ClInclude Include="indicators\cursor_control.hpp" />
+    <ClInclude Include="mbg\ReviewList.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
