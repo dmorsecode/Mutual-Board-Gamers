@@ -7,10 +7,7 @@
 
 ReviewList::ReviewList()
 {
-	// generate 1000 game IDs in sequential order
-	for (int i = 0; i < 43; i++) {
-		reviews.push_back(ReviewItem(i, "Game " + std::to_string(i), 0, "This is a comment for game " + std::to_string(i)));
-	}
+	return;
 }
 
 int ReviewList::getSize()
@@ -23,15 +20,23 @@ std::vector<ReviewList::ReviewItem> ReviewList::getReviews()
 	return reviews;
 }
 
-void ReviewList::addReview()
+void ReviewList::addReview(int gameID, std::string gameName, float rating, std::string comment)
 {
-	return;
+	reviews.push_back(ReviewItem(gameID, gameName, rating, comment));
+}
+
+void ReviewList::addReview(int gameID, std::string gameName, float rating)
+{
+	reviews.push_back(ReviewItem(gameID, gameName, rating));
 }
 
 void ReviewList::printReviews()
 {
 	for (int i = 0; i < reviews.size(); i++) {
-		std::cout << "Game ID: " << reviews[i].gameID << std::endl;
+		std::cout << "Game: " << reviews[i].gameName << " (" << reviews[i].gameID << ")" << std::endl;
+		std::cout << "Rating: " << reviews[i].rating << std::endl;
+		std::cout << "Comment: " << reviews[i].comment << std::endl;
+		std::cout << std::endl;
 	}
 }
 
@@ -197,7 +202,7 @@ void ReviewList::printSortTime()
 
 void ReviewList::shuffle()
 {
-	// shuffle the vector and copy it into reviews and reviews
+	// Shuffles the ReviewItem vector.
 	std::random_device rd;
 	std::mt19937 g(rd());
 	std::shuffle(reviews.begin(), reviews.end(), g);

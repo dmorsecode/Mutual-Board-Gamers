@@ -14,13 +14,17 @@ class ReviewList {
 			gameID = rand() % 1000;
 			gameName = "Game " + std::to_string(gameID);
 			rating = rand() % 10;
-			comment = "This is a comment for game " + std::to_string(gameID);
 		}
 		ReviewItem(int id, std::string name, float rating, std::string comment) {
 			gameID = id;
 			gameName = name;
 			this->rating = rating;
 			this->comment = comment;
+		}
+		ReviewItem(int id, std::string name, float rating) {
+			gameID = id;
+			gameName = name;
+			this->rating = rating;
 		}
 	};
 	std::vector<ReviewItem> reviews;
@@ -32,7 +36,8 @@ public:
 	ReviewList();
 	int getSize();
 	std::vector<ReviewItem> getReviews();
-	void addReview();
+	void addReview(int gameID, std::string gameName, float rating, std::string comment);
+	void addReview(int gameID, std::string gameName, float rating);
 	void printReviews();
 	void countingSort();
 	void quickSort();
