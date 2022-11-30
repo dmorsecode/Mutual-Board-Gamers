@@ -97,24 +97,11 @@ int main() {
 			}
 		}
 		else if (mapType == 2) {
-			// try-catch block in case the username doesn't exist in the map yet
-			try {
-				if (includeText == "Y" || includeText == "y") {
-					orderedUsernames.at(user).addReview(gameID, gameName, rating, comment);
-				}
-				else {
-					orderedUsernames.at(user).addReview(gameID, gameName, rating);
-				}
+			if (includeText == "Y" || includeText == "y") {
+				orderedUsernames[user].addReview(gameID, gameName, rating, comment);
 			}
-			catch (const std::out_of_range& oor) {
-				ReviewList newList = ReviewList();
-				if (includeText == "Y" || includeText == "y") {
-					newList.addReview(gameID, gameName, rating, comment);
-				}
-				else {
-					newList.addReview(gameID, gameName, rating);
-				}
-				orderedUsernames.insert({ user, newList });
+			else {
+				orderedUsernames[user].addReview(gameID, gameName, rating);
 			}
 		}
 		else {
