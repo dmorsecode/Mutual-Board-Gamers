@@ -31,20 +31,22 @@ class ReviewList {
 	int sortTime = 0;
 	std::string sortMethod;
 	std::string sortSuffix = "milliseconds";
-	void quickSort(int left, int right, int sortType);
+	void quickSort(int left, int right);
+    int sortType = 0;
 	bool sorted = false;
 public:
 	ReviewList();
 	int getSize();
 	std::vector<ReviewItem>& getReviews();
+    void setSortType(int sortType);
 	void addReview(int gameID, std::string gameName, float rating, std::string comment);
 	void addReview(int gameID, std::string gameName, float rating);
 	void addReview(ReviewItem review);
-	int findIndex(int sortType, int gameID, std::string gameName);
+	int findIndex(int gameID, std::string gameName);
 	ReviewItem getIndex(int index);
 	void printReviews();
 	void countingSort();
-	void quickSort(int sortType);
+	void quickSort();
 	void radixSort();
 	void printSortTime();
 	void shuffle();

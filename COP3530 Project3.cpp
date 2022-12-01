@@ -167,7 +167,8 @@ int main() {
 	int userCount = 0;
 	if (mapType == 1) {
 			for (auto& user : unorderedUsernames) {
-				user.second.quickSort(sortType);
+                user.second.setSortType(sortType);
+				user.second.quickSort();
 				userCount++;
 				if (user.second.getSize() > mostReviews.second) {
 					mostReviews.first = user.first;
@@ -183,7 +184,8 @@ int main() {
 	}
 	else if (mapType == 2) {
 		for (auto& user : orderedUsernames) {
-			user.second.quickSort(sortType);
+            user.second.setSortType(sortType);
+			user.second.quickSort();
 			userCount++;
 			if (user.second.getSize() > mostReviews.second) {
 				mostReviews.first = user.first;
@@ -203,7 +205,7 @@ int main() {
 	}
 	end = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-	std::cout << "done. Sorted " << userCount << " usernames in " << duration.count() << " seconds" << std::endl;
+	std::cout << "Done. Sorted " << userCount << " usernames in " << duration.count() << " seconds" << std::endl;
 	std::cout << std::endl;
 
 	// Print the reviews of the user with the most reviews.

@@ -20,6 +20,11 @@ std::vector<ReviewList::ReviewItem>& ReviewList::getReviews()
 	return reviews;
 }
 
+void ReviewList::setSortType(int _sortType)
+{
+    sortType = _sortType;
+}
+
 void ReviewList::addReview(int gameID, std::string gameName, float rating, std::string comment)
 {
 	reviews.push_back(ReviewItem(gameID, gameName, rating, comment));
@@ -38,7 +43,7 @@ void ReviewList::addReview(ReviewItem review)
 	sorted = false;
 }
 
-int ReviewList::findIndex(int sortType, int gameID, std::string gameName)
+int ReviewList::findIndex(int gameID, std::string gameName)
 {
 	// Use a binary search to find the index of the matching review depending on what the sort type is.
 	// If the sort type is 1, then sort by gameID.
@@ -83,10 +88,11 @@ ReviewList::ReviewItem ReviewList::getIndex(int index)
 void ReviewList::printReviews()
 {
 	for (int i = 0; i < reviews.size(); i++) {
+        // Moved this std::endl to the top of the for loop for it to print cleaner
+        std::cout << std::endl;
 		std::cout << "Game: " << reviews[i].gameName << " (" << reviews[i].gameID << ")" << std::endl;
 		std::cout << "Rating: " << reviews[i].rating << std::endl;
 		std::cout << "Comment: " << reviews[i].comment << std::endl;
-		std::cout << std::endl;
 	}
 }
 
@@ -140,11 +146,11 @@ void ReviewList::countingSort()
 	sorted = true;
 }
 
-void ReviewList::quickSort(int sortType) {
+void ReviewList::quickSort() {
 	// start timer for sort
 	auto start = std::chrono::high_resolution_clock::now();
 	
-	quickSort(0, reviews.size() - 1, sortType);
+	quickSort(0, reviews.size() - 1);
 
 	// stop timer for sort
 	auto stop = std::chrono::high_resolution_clock::now();
@@ -167,7 +173,7 @@ void ReviewList::quickSort(int sortType) {
 		sorted = false;
 }
 
-void ReviewList::quickSort(int left, int right, int sortType) {
+void ReviewList::quickSort(int left, int right) {
 	int i = left, j = right;
 	if (sortType == 1) {
 		// Quicksort by game ID ascending
@@ -188,10 +194,10 @@ void ReviewList::quickSort(int left, int right, int sortType) {
 			}
 		}
 		if (left < j) {
-			quickSort(left, j, 1);
+			quickSort(left, j);
 		}
 		if (i < right) {
-			quickSort(i, right, 1);
+			quickSort(i, right);
 		}
 	}
 	else if (sortType == 2) {
@@ -213,10 +219,10 @@ void ReviewList::quickSort(int left, int right, int sortType) {
 			}
 		}
 		if (left < j) {
-			quickSort(left, j, 2);
+			quickSort(left, j);
 		}
 		if (i < right) {
-			quickSort(i, right, 2);
+			quickSort(i, right);
 		}
 	}
 	else if (sortType == 3) {
@@ -238,10 +244,10 @@ void ReviewList::quickSort(int left, int right, int sortType) {
 			}
 		}
 		if (left < j) {
-			quickSort(left, j, 3);
+			quickSort(left, j);
 		}
 		if (i < right) {
-			quickSort(i, right, 3);
+			quickSort(i, right);
 		}
 	}
 }
@@ -327,10 +333,10 @@ std::pair<ReviewList, ReviewList> ReviewList::getIntersection(ReviewList& rhs)
 {
 	// needs sorted lists by gameID
 	if (!isSorted())
-		quickSort(1);
+		quickSort();
 	
 	if (!rhs.isSorted())
-		rhs.quickSort(1);
+		rhs.quickSort();
 
 	ReviewList& smaller = getSize() < rhs.getSize() ? *this : rhs;
 	ReviewList& larger = getSize() > rhs.getSize() ? *this : rhs;
@@ -341,7 +347,7 @@ std::pair<ReviewList, ReviewList> ReviewList::getIntersection(ReviewList& rhs)
 	// iterate through all elements of smaller list, adding if match is in larger list
 	for (int i = 0; i < smaller.getSize(); i++) {
 
-		int largeIndex = larger.findIndex(1, smaller.getReviews()[i].gameID, smaller.getReviews()[i].gameName);
+		int largeIndex = larger.findIndex(smaller.getReviews()[i].gameID, smaller.getReviews()[i].gameName);
 
 		if (largeIndex != -1) {
 			returnListS.addReview(smaller.getReviews()[i]);
