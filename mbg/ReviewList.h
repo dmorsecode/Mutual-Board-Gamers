@@ -31,7 +31,7 @@ class ReviewList {
 	int sortTime = 0;
 	std::string sortMethod;
 	std::string sortSuffix = "milliseconds";
-	void quickSort(int left, int right);
+	void quickSort(int left, int right, int sortType);
 public:
 	ReviewList();
 	int getSize();
@@ -40,7 +40,7 @@ public:
 	void addReview(int gameID, std::string gameName, float rating);
 	void printReviews();
 	void countingSort();
-	void quickSort();
+	void quickSort(int sortType);
 	void radixSort();
 	void printSortTime();
 	void shuffle();

@@ -38,6 +38,7 @@ int main() {
 		std::cout << "Invalid input. Please enter a number between 1 and 18964806." << std::endl;
 		std::cin >> entries;
 	}
+	std::cout << std::endl;
 
 	std::cout << "Do you want to include the review text? [Y/N]" << std::endl;
 	std::string includeText;
@@ -47,6 +48,7 @@ int main() {
 		std::cout << "Invalid input. Please enter Y or N." << std::endl;
 		std::cin >> includeText;
 	}
+	std::cout << std::endl;
 
 	// ask which map type the user wants to use
 	std::cout << "Do you want to use an unordered map (1) or an ordered map (2)?" << std::endl;
@@ -59,6 +61,7 @@ int main() {
 		std::cout << "Invalid input. Please enter 1 or 2." << std::endl;
 		std::cin >> mapType;
 	}
+	std::cout << std::endl;
 
 	// progress bar
 	ProgressBar bar;
@@ -67,7 +70,7 @@ int main() {
 	bar.set_option(option::Fill{ "=" });
 	bar.set_option(option::Lead{ "=" });
 	bar.set_option(option::Remainder{ " " });
-	bar.set_option(option::End{ " ]" });
+	bar.set_option(option::End{ "]" });
 	bar.set_option(option::ShowPercentage{ true });
 	bar.set_option(option::ShowElapsedTime{ true });
 	bar.set_option(option::ShowRemainingTime{ true });
@@ -76,7 +79,7 @@ int main() {
 	bar.set_option(option::MaxProgress{ 100 });
 	indicators::show_console_cursor(false);
 
-	std::cout << "Creating list..." << std::endl;
+	std::cout << "Creating list..." << std::endl << std::endl;
 
 	int i = 0;
 	// start chrono timer to track how long it takes to create the map
@@ -118,20 +121,93 @@ int main() {
 		// break after i = entries
 		if (i >= entries) break;
 	}
+	std::cout << std::endl;
 	indicators::show_console_cursor(true);
 
 	auto end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 	std::cout << "Time Elapsed: " << duration.count() << " seconds" << std::endl;
+	std::cout << std::endl;
+	std::cout << "Would you like to sort reviews by game ID (1), game name (2), or rating (3)?" << std::endl;
+	int sortType;
+	std::cin >> sortType;
+	// check if sortType is a valid input
+	while (std::cin.fail() || sortType < 1 || sortType > 3) {
+		std::cin.clear();
+		std::cin.ignore(256, '\n');
+		std::cout << "Invalid input. Please enter 1, 2, or 3." << std::endl;
+		std::cin >> sortType;
+	}
+	std::cout << std::endl;
 
-	// get random element from our unordered map
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dis(0, unorderedUsernames.size() - 1);
-	auto randomElement = std::next(unorderedUsernames.begin(), dis(gen));
-	// print reviews
-	std::cout << "Reviews for " << randomElement->first << std::endl;
-	randomElement->second.printReviews();
+	std::pair<std::string, int> mostReviews = { "", 0 };
+
+	std::cout << "Sorting... ";
+	start = std::chrono::high_resolution_clock::now();
+	int userCount = 0;
+	if (mapType == 1) {
+			for (auto& user : unorderedUsernames) {
+				user.second.quickSort(sortType);
+				userCount++;
+				if (user.second.getSize() > mostReviews.second) {
+					mostReviews.first = user.first;
+					mostReviews.second = user.second.getSize();
+				}
+			}
+	}
+	else if (mapType == 2) {
+		for (auto& user : orderedUsernames) {
+			user.second.quickSort(sortType);
+			userCount++;
+			if (user.second.getSize() > mostReviews.second) {
+				mostReviews.first = user.first;
+				mostReviews.second = user.second.getSize();
+			}
+		}
+	}
+	else {
+		std::cout << "Invalid map type." << std::endl;
+		return 0;
+	}
+	end = std::chrono::high_resolution_clock::now();
+	duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+	std::cout << "done. Sorted " << userCount << " usernames in " << duration.count() << " seconds" << std::endl;
+	std::cout << std::endl;
+
+	// Print the reviews of the user with the most reviews.
+	std::cout << "User with the most reviews: " << mostReviews.first << std::endl;
+	std::cout << "Number of reviews: " << mostReviews.second << std::endl;
+	if (mapType == 1) {
+		unorderedUsernames[mostReviews.first].printReviews();
+	}
+	else if (mapType == 2) {
+		orderedUsernames[mostReviews.first].printReviews();
+	}
+	else {
+		std::cout << "Invalid map type." << std::endl;
+		return 0;
+	}
+	
+	//// Print the reviews of a random user.
+	//std::random_device rd;
+	//std::mt19937 gen(rd());
+	//std::uniform_int_distribution<> dis(0, userCount - 1);
+	//if (mapType == 1) {
+	//	auto it = unorderedUsernames.begin();
+	//	std::advance(it, dis(gen));
+	//	std::cout << it->first << "'s reviews:" << std::endl;
+	//	it->second.printReviews();
+	//}
+	//else if (mapType == 2) {
+	//	auto it = orderedUsernames.begin();
+	//	std::advance(it, dis(gen));
+	//	std::cout << it->first << "'s reviews:" << std::endl;
+	//	it->second.printReviews();
+	//}
+	//else {
+	//	std::cout << "Invalid map type." << std::endl;
+	//	return 0;
+	//}
 
 	return 0;
 }

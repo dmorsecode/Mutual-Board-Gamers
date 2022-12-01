@@ -88,11 +88,11 @@ void ReviewList::countingSort()
 	sortMethod = "Counting Sort";
 }
 
-void ReviewList::quickSort() {
+void ReviewList::quickSort(int sortType) {
 	// start timer for sort
 	auto start = std::chrono::high_resolution_clock::now();
 	
-	quickSort(0, reviews.size() - 1);
+	quickSort(0, reviews.size() - 1, sortType);
 
 	// stop timer for sort
 	auto stop = std::chrono::high_resolution_clock::now();
@@ -110,33 +110,83 @@ void ReviewList::quickSort() {
 	sortMethod = "Quick Sort";
 }
 
-void ReviewList::quickSort(int left, int right) {
-	
-	// Quick Sort by game ids
+void ReviewList::quickSort(int left, int right, int sortType) {
 	int i = left, j = right;
-	int pivot = reviews[(left + right) / 2].gameID;
-	while (i <= j) {
-		while (reviews[i].gameID < pivot) {
-			i++;
+	if (sortType == 1) {
+		// Quicksort by game ID ascending
+		int pivot = reviews[(left + right) / 2].gameID;
+		while (i <= j) {
+			while (reviews[i].gameID < pivot) {
+				i++;
+			}
+			while (reviews[j].gameID > pivot) {
+				j--;
+			}
+			if (i <= j) {
+				ReviewItem temp = reviews[i];
+				reviews[i] = reviews[j];
+				reviews[j] = temp;
+				i++;
+				j--;
+			}
 		}
-		while (reviews[j].gameID > pivot) {
-			j--;
+		if (left < j) {
+			quickSort(left, j, 1);
 		}
-		if (i <= j) {
-			ReviewItem temp = reviews[i];
-			reviews[i] = reviews[j];
-			reviews[j] = temp;
-			i++;
-			j--;
+		if (i < right) {
+			quickSort(i, right, 1);
 		}
 	}
-	if (left < j) {
-		quickSort(left, j);
+	else if (sortType == 2) {
+		// Quicksort by game name
+		std::string pivot = reviews[(left + right) / 2].gameName;
+		while (i <= j) {
+			while (reviews[i].gameName < pivot) {
+				i++;
+			}
+			while (reviews[j].gameName > pivot) {
+				j--;
+			}
+			if (i <= j) {
+				ReviewItem temp = reviews[i];
+				reviews[i] = reviews[j];
+				reviews[j] = temp;
+				i++;
+				j--;
+			}
+		}
+		if (left < j) {
+			quickSort(left, j, 2);
+		}
+		if (i < right) {
+			quickSort(i, right, 2);
+		}
 	}
-	if (i < right) {
-		quickSort(i, right);
+	else if (sortType == 3) {
+		// Quicksort by rating descending
+		float pivot = reviews[(left + right) / 2].rating;
+		while (i <= j) {
+			while (reviews[i].rating > pivot) {
+				i++;
+			}
+			while (reviews[j].rating < pivot) {
+				j--;
+			}
+			if (i <= j) {
+				ReviewItem temp = reviews[i];
+				reviews[i] = reviews[j];
+				reviews[j] = temp;
+				i++;
+				j--;
+			}
+		}
+		if (left < j) {
+			quickSort(left, j, 2);
+		}
+		if (i < right) {
+			quickSort(i, right, 2);
+		}
 	}
-	
 }
 
 void ReviewList::radixSort()
