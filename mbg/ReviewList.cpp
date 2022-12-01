@@ -23,11 +23,13 @@ std::vector<ReviewList::ReviewItem> ReviewList::getReviews()
 void ReviewList::addReview(int gameID, std::string gameName, float rating, std::string comment)
 {
 	reviews.push_back(ReviewItem(gameID, gameName, rating, comment));
+	sorted = false;
 }
 
 void ReviewList::addReview(int gameID, std::string gameName, float rating)
 {
 	reviews.push_back(ReviewItem(gameID, gameName, rating));
+	sorted = false;
 }
 
 int ReviewList::findIndex(int sortType, int gameID, std::string gameName)
@@ -128,6 +130,8 @@ void ReviewList::countingSort()
 		sortSuffix = "milliseconds";
 	}
 	sortMethod = "Counting Sort";
+
+	sorted = true;
 }
 
 void ReviewList::quickSort(int sortType) {
@@ -150,6 +154,11 @@ void ReviewList::quickSort(int sortType) {
 		sortSuffix = "milliseconds";
 	}
 	sortMethod = "Quick Sort";
+
+	if (sortType == 1)
+		sorted = true;
+	else
+		sorted = false;
 }
 
 void ReviewList::quickSort(int left, int right, int sortType) {
@@ -284,6 +293,8 @@ void ReviewList::radixSort()
 		sortSuffix = "milliseconds";
 	}
 	sortMethod = "Radix Sort";
+
+	sorted = true;
 }
 
 void ReviewList::printSortTime()
@@ -298,4 +309,5 @@ void ReviewList::shuffle()
 	std::random_device rd;
 	std::mt19937 g(rd());
 	std::shuffle(reviews.begin(), reviews.end(), g);
+	sorted = false;
 }

@@ -32,6 +32,7 @@ class ReviewList {
 	std::string sortMethod;
 	std::string sortSuffix = "milliseconds";
 	void quickSort(int left, int right, int sortType);
+	bool sorted = false;
 public:
 	ReviewList();
 	int getSize();
