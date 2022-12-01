@@ -47,4 +47,5 @@ public:
 	void radixSort();
 	void printSortTime();
 	void shuffle();
+	const bool isSorted();
 };

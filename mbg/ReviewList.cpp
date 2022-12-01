@@ -311,3 +311,10 @@ void ReviewList::shuffle()
 	std::shuffle(reviews.begin(), reviews.end(), g);
 	sorted = false;
 }
+
+const bool ReviewList::isSorted()
+{
+	return sorted;
+}
+
+
