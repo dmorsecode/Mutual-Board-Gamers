@@ -15,7 +15,7 @@ int ReviewList::getSize()
 	return reviews.size();
 }
 
-std::vector<ReviewList::ReviewItem> ReviewList::getReviews()
+std::vector<ReviewList::ReviewItem>& ReviewList::getReviews()
 {
 	return reviews;
 }
@@ -29,6 +29,12 @@ void ReviewList::addReview(int gameID, std::string gameName, float rating, std::
 void ReviewList::addReview(int gameID, std::string gameName, float rating)
 {
 	reviews.push_back(ReviewItem(gameID, gameName, rating));
+	sorted = false;
+}
+
+void ReviewList::addReview(ReviewItem review)
+{
+	reviews.push_back(review);
 	sorted = false;
 }
 
@@ -317,4 +323,35 @@ const bool ReviewList::isSorted()
 	return sorted;
 }
 
+std::pair<ReviewList, ReviewList> ReviewList::getIntersection(ReviewList& rhs)
+{
+	// needs sorted lists by gameID
+	if (!isSorted())
+		quickSort(1);
+	
+	if (!rhs.isSorted())
+		rhs.quickSort(1);
 
+	ReviewList& smaller = getSize() < rhs.getSize() ? *this : rhs;
+	ReviewList& larger = getSize() > rhs.getSize() ? *this : rhs;
+
+	ReviewList returnListS;
+	ReviewList returnListL;
+
+	// iterate through all elements of smaller list, adding if match is in larger list
+	for (int i = 0; i < smaller.getSize(); i++) {
+
+		int largeIndex = larger.findIndex(1, smaller.getReviews()[i].gameID, smaller.getReviews()[i].gameName);
+
+		if (largeIndex != -1) {
+			returnListS.addReview(smaller.getReviews()[i]);
+			returnListL.addReview(larger.getReviews()[largeIndex]);
+		}
+	}
+
+	// return in correct order 
+	if (getSize() < rhs.getSize())
+		return std::pair<ReviewList, ReviewList>(returnListS, returnListL);
+	else
+		return std::pair<ReviewList, ReviewList>(returnListL, returnListS);
+}

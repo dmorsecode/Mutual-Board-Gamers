@@ -36,9 +36,10 @@ class ReviewList {
 public:
 	ReviewList();
 	int getSize();
-	std::vector<ReviewItem> getReviews();
+	std::vector<ReviewItem>& getReviews();
 	void addReview(int gameID, std::string gameName, float rating, std::string comment);
 	void addReview(int gameID, std::string gameName, float rating);
+	void addReview(ReviewItem review);
 	int findIndex(int sortType, int gameID, std::string gameName);
 	ReviewItem getIndex(int index);
 	void printReviews();
@@ -48,4 +49,5 @@ public:
 	void printSortTime();
 	void shuffle();
 	const bool isSorted();
+	std::pair<ReviewList, ReviewList> getIntersection(ReviewList& rhs);
 };
