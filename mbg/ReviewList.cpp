@@ -30,6 +30,48 @@ void ReviewList::addReview(int gameID, std::string gameName, float rating)
 	reviews.push_back(ReviewItem(gameID, gameName, rating));
 }
 
+int ReviewList::findIndex(int sortType, int gameID, std::string gameName)
+{
+	// Use a binary search to find the index of the matching review depending on what the sort type is.
+	// If the sort type is 1, then sort by gameID.
+	// If the sort type is 2, then sort by gameName.
+	int left = 0;
+	int right = reviews.size() - 1;
+	int mid = 0;
+	while (left <= right) {
+		mid = (left + right) / 2;
+		if (sortType == 1) {
+			if (gameID == reviews[mid].gameID) {
+				return mid;
+			}
+			else if (gameID < reviews[mid].gameID) {
+				right = mid - 1;
+			}
+			else {
+				left = mid + 1;
+			}
+		}
+		else if (sortType == 2) {
+			if (gameName == reviews[mid].gameName) {
+				return mid;
+			}
+			else if (gameName < reviews[mid].gameName) {
+				right = mid - 1;
+			}
+			else {
+				left = mid + 1;
+			}
+		}
+	}
+	// If not found, return -1.
+	return -1;
+}
+
+ReviewList::ReviewItem ReviewList::getIndex(int index)
+{
+	return reviews[index];
+}
+
 void ReviewList::printReviews()
 {
 	for (int i = 0; i < reviews.size(); i++) {
@@ -181,10 +223,10 @@ void ReviewList::quickSort(int left, int right, int sortType) {
 			}
 		}
 		if (left < j) {
-			quickSort(left, j, 2);
+			quickSort(left, j, 3);
 		}
 		if (i < right) {
-			quickSort(i, right, 2);
+			quickSort(i, right, 3);
 		}
 	}
 }

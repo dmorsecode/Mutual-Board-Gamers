@@ -29,14 +29,18 @@ int main() {
 	
 
 	std::cout << "How many entries would you like to load? [1 - 18964806]" << std::endl;
+	std::cout << "(You may enter 0 to load every entry.)" << std::endl;
 	int entries;
 	std::cin >> entries;
 	// check if entries is a valid number
-	while (std::cin.fail() || entries < 1 || entries > 18964806) {
+	while (std::cin.fail() || entries < 0 || entries > 18964806) {
 		std::cin.clear();
 		std::cin.ignore(256, '\n');
-		std::cout << "Invalid input. Please enter a number between 1 and 18964806." << std::endl;
+		std::cout << "Invalid input. Please enter a number between 0 and 18964806." << std::endl;
 		std::cin >> entries;
+	}
+	if (entries == 0) {
+		entries = 18964806;
 	}
 	std::cout << std::endl;
 
@@ -142,6 +146,22 @@ int main() {
 
 	std::pair<std::string, int> mostReviews = { "", 0 };
 
+	// New progress bar to track sorts
+	ProgressBar bar2;
+	bar2.set_option(option::BarWidth{ 50 });
+	bar2.set_option(option::Start{ "[" });
+	bar2.set_option(option::Fill{ "=" });
+	bar2.set_option(option::Lead{ "=" });
+	bar2.set_option(option::Remainder{ " " });
+	bar2.set_option(option::End{ "]" });
+	bar2.set_option(option::ShowPercentage{ true });
+	bar2.set_option(option::ShowElapsedTime{ true });
+	bar2.set_option(option::ShowRemainingTime{ true });
+	bar2.set_option(option::ForegroundColor{ Color::white });
+	bar2.set_option(option::FontStyles{ std::vector<FontStyle>{FontStyle::bold} });
+	bar2.set_option(option::MaxProgress{ 100 });
+	indicators::show_console_cursor(false);
+
 	std::cout << "Sorting... ";
 	start = std::chrono::high_resolution_clock::now();
 	int userCount = 0;
@@ -153,6 +173,12 @@ int main() {
 					mostReviews.first = user.first;
 					mostReviews.second = user.second.getSize();
 				}
+				if (userCount % (unorderedUsernames.size() / 100) == 0) {
+					// make sure bar isnt completed first
+					if (bar2.current() != 100) {
+						bar2.tick();
+					}
+				}
 			}
 	}
 	else if (mapType == 2) {
@@ -162,6 +188,12 @@ int main() {
 			if (user.second.getSize() > mostReviews.second) {
 				mostReviews.first = user.first;
 				mostReviews.second = user.second.getSize();
+			}
+			if (userCount % (orderedUsernames.size() / 100) == 0) {
+				// make sure bar isnt completed first
+				if (bar2.current() != 100) {
+					bar2.tick();
+				}
 			}
 		}
 	}

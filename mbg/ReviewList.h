@@ -38,6 +38,8 @@ public:
 	std::vector<ReviewItem> getReviews();
 	void addReview(int gameID, std::string gameName, float rating, std::string comment);
 	void addReview(int gameID, std::string gameName, float rating);
+	int findIndex(int sortType, int gameID, std::string gameName);
+	ReviewItem getIndex(int index);
 	void printReviews();
 	void countingSort();
 	void quickSort(int sortType);
