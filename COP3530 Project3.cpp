@@ -221,27 +221,6 @@ int main() {
 		std::cout << "Invalid map type." << std::endl;
 		return 0;
 	}
-	
-	//// Print the reviews of a random user.
-	//std::random_device rd;
-	//std::mt19937 gen(rd());
-	//std::uniform_int_distribution<> dis(0, userCount - 1);
-	//if (mapType == 1) {
-	//	auto it = unorderedUsernames.begin();
-	//	std::advance(it, dis(gen));
-	//	std::cout << it->first << "'s reviews:" << std::endl;
-	//	it->second.printReviews();
-	//}
-	//else if (mapType == 2) {
-	//	auto it = orderedUsernames.begin();
-	//	std::advance(it, dis(gen));
-	//	std::cout << it->first << "'s reviews:" << std::endl;
-	//	it->second.printReviews();
-	//}
-	//else {
-	//	std::cout << "Invalid map type." << std::endl;
-	//	return 0;
-	//}
 
 	return 0;
 }

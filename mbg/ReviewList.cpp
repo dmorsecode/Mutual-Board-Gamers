@@ -28,36 +28,42 @@ void ReviewList::setSortType(int _sortType)
 void ReviewList::addReview(int gameID, std::string gameName, float rating, std::string comment)
 {
 	reviews.push_back(ReviewItem(gameID, gameName, rating, comment));
-	sorted = false;
 }
 
 void ReviewList::addReview(int gameID, std::string gameName, float rating)
 {
 	reviews.push_back(ReviewItem(gameID, gameName, rating));
-	sorted = false;
 }
 
 void ReviewList::addReview(ReviewItem review)
 {
 	reviews.push_back(review);
-	sorted = false;
 }
 
-int ReviewList::findIndex(int gameID, std::string gameName)
+int ReviewList::findIndex(ReviewItem& game)
 {
 	// Use a binary search to find the index of the matching review depending on what the sort type is.
 	// If the sort type is 1, then sort by gameID.
 	// If the sort type is 2, then sort by gameName.
+	// If the sort type is 3, then... unfortunately, we need a linear search.
+	if (sortType == 3) {
+		for (int i = 0; i < reviews.size(); i++) {
+			if (reviews[i].gameID == game.gameID && reviews[i].gameName == game.gameName) {
+				return i;
+			}
+		}
+		return -1;
+	}
 	int left = 0;
 	int right = reviews.size() - 1;
 	int mid = 0;
 	while (left <= right) {
 		mid = (left + right) / 2;
 		if (sortType == 1) {
-			if (gameID == reviews[mid].gameID) {
+			if (game.gameID == reviews[mid].gameID) {
 				return mid;
 			}
-			else if (gameID < reviews[mid].gameID) {
+			else if (game.gameID < reviews[mid].gameID) {
 				right = mid - 1;
 			}
 			else {
@@ -65,10 +71,10 @@ int ReviewList::findIndex(int gameID, std::string gameName)
 			}
 		}
 		else if (sortType == 2) {
-			if (gameName == reviews[mid].gameName) {
+			if (game.gameName == reviews[mid].gameName) {
 				return mid;
 			}
-			else if (gameName < reviews[mid].gameName) {
+			else if (game.gameName < reviews[mid].gameName) {
 				right = mid - 1;
 			}
 			else {
@@ -142,8 +148,6 @@ void ReviewList::countingSort()
 		sortSuffix = "milliseconds";
 	}
 	sortMethod = "Counting Sort";
-
-	sorted = true;
 }
 
 void ReviewList::quickSort() {
@@ -166,11 +170,6 @@ void ReviewList::quickSort() {
 		sortSuffix = "milliseconds";
 	}
 	sortMethod = "Quick Sort";
-
-	if (sortType == 1)
-		sorted = true;
-	else
-		sorted = false;
 }
 
 void ReviewList::quickSort(int left, int right) {
@@ -305,8 +304,6 @@ void ReviewList::radixSort()
 		sortSuffix = "milliseconds";
 	}
 	sortMethod = "Radix Sort";
-
-	sorted = true;
 }
 
 void ReviewList::printSortTime()
@@ -321,23 +318,10 @@ void ReviewList::shuffle()
 	std::random_device rd;
 	std::mt19937 g(rd());
 	std::shuffle(reviews.begin(), reviews.end(), g);
-	sorted = false;
-}
-
-const bool ReviewList::isSorted()
-{
-	return sorted;
 }
 
 std::pair<ReviewList, ReviewList> ReviewList::getIntersection(ReviewList& rhs)
 {
-	// needs sorted lists by gameID
-	if (!isSorted())
-		quickSort();
-	
-	if (!rhs.isSorted())
-		rhs.quickSort();
-
 	ReviewList& smaller = getSize() < rhs.getSize() ? *this : rhs;
 	ReviewList& larger = getSize() > rhs.getSize() ? *this : rhs;
 
@@ -347,7 +331,7 @@ std::pair<ReviewList, ReviewList> ReviewList::getIntersection(ReviewList& rhs)
 	// iterate through all elements of smaller list, adding if match is in larger list
 	for (int i = 0; i < smaller.getSize(); i++) {
 
-		int largeIndex = larger.findIndex(smaller.getReviews()[i].gameID, smaller.getReviews()[i].gameName);
+		int largeIndex = larger.findIndex(smaller.getReviews()[i]);
 
 		if (largeIndex != -1) {
 			returnListS.addReview(smaller.getReviews()[i]);

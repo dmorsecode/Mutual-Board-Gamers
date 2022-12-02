@@ -32,8 +32,7 @@ class ReviewList {
 	std::string sortMethod;
 	std::string sortSuffix = "milliseconds";
 	void quickSort(int left, int right);
-    int sortType = 0;
-	bool sorted = false;
+    int sortType = -1;
 public:
 	ReviewList();
 	int getSize();
@@ -42,7 +41,7 @@ public:
 	void addReview(int gameID, std::string gameName, float rating, std::string comment);
 	void addReview(int gameID, std::string gameName, float rating);
 	void addReview(ReviewItem review);
-	int findIndex(int gameID, std::string gameName);
+	int findIndex(ReviewItem& game);
 	ReviewItem getIndex(int index);
 	void printReviews();
 	void countingSort();
@@ -50,6 +49,5 @@ public:
 	void radixSort();
 	void printSortTime();
 	void shuffle();
-	const bool isSorted();
 	std::pair<ReviewList, ReviewList> getIntersection(ReviewList& rhs);
 };
