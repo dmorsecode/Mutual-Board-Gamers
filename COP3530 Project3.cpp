@@ -12,12 +12,14 @@
 #include <indicators.hpp>
 
 #include "mbg/ReviewList.h"
+#include "UIManager.h"
+
 using namespace csv;
 using namespace indicators;
 
 int main() {
-	
-    // unordered map
+
+	// unordered map
 	std::unordered_map<std::string, ReviewList> unorderedUsernames;
 
     // ordered map
@@ -28,44 +30,16 @@ int main() {
     CSVRow row;
 	
 
-	std::cout << "How many entries would you like to load? [1 - 18964806]" << std::endl;
-	std::cout << "(You may enter 0 to load every entry.)" << std::endl;
-	int entries;
-	std::cin >> entries;
-	// check if entries is a valid number
-	while (std::cin.fail() || entries < 0 || entries > 18964806) {
-		std::cin.clear();
-		std::cin.ignore(256, '\n');
-		std::cout << "Invalid input. Please enter a number between 0 and 18964806." << std::endl;
-		std::cin >> entries;
-	}
-	if (entries == 0) {
-		entries = 18964806;
-	}
-	std::cout << std::endl;
-
-	std::cout << "Do you want to include the review text? [Y/N]" << std::endl;
-	std::string includeText;
-	std::cin >> includeText;
-	// check if includeText is a valid input
-	while (includeText != "Y" && includeText != "y" && includeText != "N" && includeText != "n") {
-		std::cout << "Invalid input. Please enter Y or N." << std::endl;
-		std::cin >> includeText;
-	}
-	std::cout << std::endl;
-
+	// get number of records to load
+	int entries = UIManager::getIntInput("How many entries would you like to load?", 1, 18964806, 0, 18964806);
+	
+	// include review text or not
+	bool includeText = UIManager::getBoolInput("Do you want to include the review text?");
+	
 	// ask which map type the user wants to use
-	std::cout << "Do you want to use an unordered map (1) or an ordered map (2)?" << std::endl;
-	int mapType;
-	std::cin >> mapType;
-	// check if mapType is a valid input
-	while (std::cin.fail() || mapType < 1 || mapType > 2) {
-		std::cin.clear();
-		std::cin.ignore(256, '\n');
-		std::cout << "Invalid input. Please enter 1 or 2." << std::endl;
-		std::cin >> mapType;
-	}
-	std::cout << std::endl;
+	int mapType = UIManager::getIntInput("Do you want to use an unordered map (1) or an ordered map (2)?", 1, 2);
+
+
 
 	// progress bar
 	ProgressBar bar;
@@ -96,7 +70,7 @@ int main() {
 		std::string comment = row["comment"].get<>();
 
 		if (mapType == 1) {
-			if (includeText == "Y" || includeText == "y") {
+			if (includeText) {
 				unorderedUsernames[user].addReview(gameID, gameName, rating, comment);
 			}
 			else {
@@ -104,7 +78,7 @@ int main() {
 			}
 		}
 		else if (mapType == 2) {
-			if (includeText == "Y" || includeText == "y") {
+			if (includeText) {
 				orderedUsernames[user].addReview(gameID, gameName, rating, comment);
 			}
 			else {
@@ -132,18 +106,9 @@ int main() {
 	auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 	std::cout << "Time Elapsed: " << duration.count() << " seconds" << std::endl;
 	std::cout << std::endl;
-	std::cout << "Would you like to sort reviews by game ID (1), game name (2), or rating (3)?" << std::endl;
-	int sortType;
-	std::cin >> sortType;
-	// check if sortType is a valid input
-	while (std::cin.fail() || sortType < 1 || sortType > 3) {
-		std::cin.clear();
-		std::cin.ignore(256, '\n');
-		std::cout << "Invalid input. Please enter 1, 2, or 3." << std::endl;
-		std::cin >> sortType;
-	}
-	std::cout << std::endl;
 
+	int sortType = UIManager::getIntInput("Would you like to sort reviews by game ID (1), game name (2), or rating (3)?", 1, 3);
+	
 	std::pair<std::string, int> mostReviews = { "", 0 };
 
 	// New progress bar to track sorts
@@ -207,6 +172,119 @@ int main() {
 	duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 	std::cout << "done. Sorted " << userCount << " usernames in " << duration.count() << " seconds" << std::endl;
 	std::cout << std::endl;
+		
+	bool exit = false;
+	bool changeMenu = false;
+
+	std::string user1, user2;
+
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(1, entries);
+
+	while (exit == false) {
+
+		// main menu (no selected user)
+		if (user1 == "") { 
+			int uiChoice = UIManager::displayMainMenu();
+			
+			switch (uiChoice) {
+			case 1: // view random user
+			{
+				int rand = distribution(generator);
+				if (mapType == 1) {
+					auto iter = unorderedUsernames.cbegin();
+					std::advance(iter, rand);
+					user1 = (*iter).first;
+				}
+				else if (mapType == 2) {
+					auto iter = orderedUsernames.cbegin();
+					std::advance(iter, rand);
+					user1 = (*iter).first;
+				}
+				break;
+			}
+
+			case 2: // find user
+				user1 = UIManager::getStringInput("Enter a username:");
+				if (mapType == 1) {
+					if (unorderedUsernames.find(user1) == unorderedUsernames.end()) {
+						std::cout << "User not found" << std::endl;
+						user1 = "";
+					}
+				}
+				else if(mapType == 2) {
+					if (orderedUsernames.find(user1) == orderedUsernames.end()) {
+						std::cout << "User not found" << std::endl;
+						user1 = "";
+					}
+				}
+				break;
+
+			case 3: // exit
+				exit = true;
+				break;
+			}
+		}
+		else // user is selected
+		{
+			int uiChoice = UIManager::displayUserMenu(user1);
+
+			switch (uiChoice) {
+			case 1: // display reviews by name
+				
+				if (mapType == 1)
+					UIManager::printUserRatings(unorderedUsernames[user1], 1);
+				else if (mapType == 2) 
+					UIManager::printUserRatings(orderedUsernames[user1], 1);
+				break;
+
+			case 2: // display reviews by rating
+				if (mapType == 1)
+					UIManager::printUserRatings(unorderedUsernames[user1], 2);
+				else if (mapType == 2)
+					UIManager::printUserRatings(orderedUsernames[user1], 2);
+				break;
+
+			case 3: // compare
+				while (user2 == "") {
+					user2 = UIManager::getStringInput("Enter a username:");
+					if (mapType == 1) {
+						if (unorderedUsernames.find(user2) == unorderedUsernames.end()) {
+							std::cout << "User not found" << std::endl;
+							user2 = "";
+						}
+					}
+					else if (mapType == 2) {
+						if (orderedUsernames.find(user2) == orderedUsernames.end()) {
+							std::cout << "User not found" << std::endl;
+							user2 = "";
+						}
+					}
+				}
+
+				// calculate and display comparison
+				if (mapType == 1) {
+					std::pair<ReviewList, ReviewList> gamesInCommon = unorderedUsernames[user1].getIntersection(unorderedUsernames[user2]);
+					UIManager::printRatingComparison(gamesInCommon.first, gamesInCommon.second, 1);
+				}
+				else if (mapType == 2) {
+					std::pair<ReviewList, ReviewList> gamesInCommon = orderedUsernames[user1].getIntersection(orderedUsernames[user2]);
+					UIManager::printRatingComparison(gamesInCommon.first, gamesInCommon.second, 1);
+
+				}
+				
+				//reset user2
+				user2 = "";
+				break;
+			
+			case 4: // go back
+				user1 = "";
+				break;
+			}
+		}
+				
+	}
+
 
 	// Print the reviews of the user with the most reviews.
 	std::cout << "User with the most reviews: " << mostReviews.first << std::endl;
