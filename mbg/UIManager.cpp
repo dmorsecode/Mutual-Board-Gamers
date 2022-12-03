@@ -17,6 +17,8 @@ int UIManager::displayPrompts(std::vector<std::string> prompts)
 }
 
 int UIManager::getIntInput(int min, int max) {
+	cin.clear();
+	cin.ignore(256, '\n');
 	cout << "> ";
 	int result;
 
@@ -37,6 +39,8 @@ int UIManager::getIntInput(int min, int max) {
 
 std::string UIManager::getStringInput(std::string prompt)
 {
+	cin.clear();
+	cin.ignore(256, '\n');
 	cout << prompt << endl;
 	cout << "> ";
 
@@ -46,7 +50,9 @@ std::string UIManager::getStringInput(std::string prompt)
 
 	// TODO: input validation (regex?)
 	while (cin.fail() || result == "") {
-		cout << "Invalid input. Please enter Y or N." << endl;
+		cin.clear();
+		cin.ignore(256, '\n');
+		cout << "Invalid input. Please enter a proper string." << endl;
 		std::getline(cin, result);
 	}
 	cout << endl;
@@ -56,6 +62,8 @@ std::string UIManager::getStringInput(std::string prompt)
 
 int UIManager::getIntInput(std::string prompt, int min, int max, int defaultEntry, int defaultValue)
 {
+	cin.clear();
+	cin.ignore(256, '\n');
 	cout << prompt << endl;
 	cout << "[" << min << "-" << max << "] (enter " << defaultEntry << " for " << defaultValue << ")" << endl;
 
@@ -81,6 +89,8 @@ int UIManager::getIntInput(std::string prompt, int min, int max, int defaultEntr
 
 int UIManager::getIntInput(std::string prompt, int min, int max)
 {
+	cin.clear();
+	cin.ignore(256, '\n');
 	cout << prompt << endl;
 	cout << "[" << min << "-" << max << "]" << endl;
 
@@ -106,6 +116,8 @@ int UIManager::getIntInput(std::string prompt, int min, int max)
 
 bool UIManager::getBoolInput(string prompt)
 {
+	cin.clear();
+	cin.ignore(256, '\n');
 	cout << prompt << " [Y/N]" << endl;
 	string result;
 
