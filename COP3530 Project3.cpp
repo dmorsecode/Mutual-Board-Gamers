@@ -12,7 +12,7 @@
 #include <indicators.hpp>
 
 #include "mbg/ReviewList.h"
-#include "UIManager.h"
+#include "mbg/UIManager.h"
 
 using namespace csv;
 using namespace indicators;
@@ -178,9 +178,6 @@ int main() {
 
 	std::string user1, user2;
 
-	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distribution(1, entries);
-
 	while (exit == false) {
 
 		// main menu (no selected user)
@@ -190,16 +187,26 @@ int main() {
 			switch (uiChoice) {
 			case 1: // view random user
 			{
-				int rand = distribution(generator);
+				// choose random user from the correct map
+				std::random_device rd;
+				std::mt19937 gen(rd());
 				if (mapType == 1) {
-					auto iter = unorderedUsernames.cbegin();
-					std::advance(iter, rand);
-					user1 = (*iter).first;
+					std::uniform_int_distribution<> dis(0, unorderedUsernames.size() - 1);
+					int randomIndex = dis(gen);
+					auto it = unorderedUsernames.begin();
+					std::advance(it, randomIndex);
+					user1 = it->first;
 				}
 				else if (mapType == 2) {
-					auto iter = orderedUsernames.cbegin();
-					std::advance(iter, rand);
-					user1 = (*iter).first;
+					std::uniform_int_distribution<> dis(0, orderedUsernames.size() - 1);
+					int randomIndex = dis(gen);
+					auto it = orderedUsernames.begin();
+					std::advance(it, randomIndex);
+					user1 = it->first;
+				}
+				else {
+					std::cout << "Invalid map type." << std::endl;
+					return 0;
 				}
 				break;
 			}
@@ -283,21 +290,6 @@ int main() {
 			}
 		}
 				
-	}
-
-
-	// Print the reviews of the user with the most reviews.
-	std::cout << "User with the most reviews: " << mostReviews.first << std::endl;
-	std::cout << "Number of reviews: " << mostReviews.second << std::endl;
-	if (mapType == 1) {
-		unorderedUsernames[mostReviews.first].printReviews();
-	}
-	else if (mapType == 2) {
-		orderedUsernames[mostReviews.first].printReviews();
-	}
-	else {
-		std::cout << "Invalid map type." << std::endl;
-		return 0;
 	}
 
 	return 0;
