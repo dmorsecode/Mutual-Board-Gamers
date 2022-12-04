@@ -1,9 +1,12 @@
 #include "UIManager.h"
+#include <tabulate\tabulate.hpp>
 
 using std::cout;
 using std::cin;
 using std::endl;
 using std::string;
+using tabulate::Table;
+
 
 int UIManager::displayPrompts(std::vector<std::string> prompts)
 {
@@ -166,9 +169,27 @@ int UIManager::displayUserMenu(std::string selectedUser)
 
 void UIManager::printUserRatings(ReviewList user, int sort)
 {
-	for (int i = 0; i < user.getSize(); i++) {
-		cout << user.getReviews()[i].gameName << ": " << user.getReviews()[i].rating << endl;
+	if (user.getSortType() != sort) {
+		user.setSortType(sort);
+		user.quickSort();
 	}
+	
+	Table userRatings;
+	
+	userRatings.add_row({ "Game", "Rating" });
+	userRatings[0].format()
+		.padding_top(1)
+		.padding_bottom(1)
+		.font_align(tabulate::FontAlign::center)
+		.font_style({ tabulate::FontStyle::underline });
+
+	for (int i = 0; i < user.getSize(); i++) {
+		userRatings.add_row({ 
+			user.getReviews()[i].gameName,
+			std::to_string(user.getReviews()[i].rating + 0.05).substr(0,3) });
+	}
+
+	userRatings.print(cout);
 
 	cout << endl;
 
@@ -176,9 +197,36 @@ void UIManager::printUserRatings(ReviewList user, int sort)
 
 void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, int sort)
 {
-	for (int i = 0; i < user1.getSize(); i++) {
-		cout << user1.getReviews()[i].gameName << ": " << user1.getReviews()[i].rating << " | " << user2.getReviews()[i].rating << endl;
+
+	if (user1.getSortType() != sort) {
+		user1.setSortType(sort);
+		user1.quickSort();
 	}
+
+	if (user2.getSortType() != sort) {
+		user2.setSortType(sort);
+		user2.quickSort();
+	}
+	
+	Table userRatingsCompare;
+
+	userRatingsCompare.add_row({ "Game", "Rating", "Rating", "Compatibility"});
+
+	userRatingsCompare[0].format()
+		.padding_top(1)
+		.padding_bottom(1)
+		.font_align(tabulate::FontAlign::center)
+		.font_style({ tabulate::FontStyle::underline });
+
+	for (int i = 0; i < user1.getSize(); i++) {
+		userRatingsCompare.add_row({ 
+			user1.getReviews()[i].gameName, 
+			std::to_string(user1.getReviews()[i].rating + 0.05).substr(0,3), 
+			std::to_string(user2.getReviews()[i].rating + 0.05).substr(0,3), 
+			std::to_string(5.0 - abs(user1.getReviews()[i].rating - user2.getReviews()[i].rating) + 0.05).substr(0,3)});
+	}
+
+	userRatingsCompare.print(cout);
 
 	cout << endl;
 }

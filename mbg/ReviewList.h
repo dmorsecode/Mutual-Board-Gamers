@@ -37,7 +37,8 @@ public:
 	ReviewList();
 	int getSize();
 	std::vector<ReviewItem>& getReviews();
-    void setSortType(int sortType);
+	int getSortType();
+	void setSortType(int sortType);
 	void addReview(int gameID, std::string gameName, float rating, std::string comment);
 	void addReview(int gameID, std::string gameName, float rating);
 	void addReview(ReviewItem review);

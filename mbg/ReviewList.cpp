@@ -20,6 +20,11 @@ std::vector<ReviewList::ReviewItem>& ReviewList::getReviews()
 	return reviews;
 }
 
+int ReviewList::getSortType()
+{
+	return sortType;
+}
+
 void ReviewList::setSortType(int _sortType)
 {
     sortType = _sortType;

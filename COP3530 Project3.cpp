@@ -240,16 +240,16 @@ int main() {
 			case 1: // display reviews by name
 				
 				if (mapType == 1)
-					UIManager::printUserRatings(unorderedUsernames[user1], 1);
+					UIManager::printUserRatings(unorderedUsernames[user1], 2);
 				else if (mapType == 2) 
-					UIManager::printUserRatings(orderedUsernames[user1], 1);
+					UIManager::printUserRatings(orderedUsernames[user1], 2);
 				break;
 
 			case 2: // display reviews by rating
 				if (mapType == 1)
-					UIManager::printUserRatings(unorderedUsernames[user1], 2);
+					UIManager::printUserRatings(unorderedUsernames[user1], 3);
 				else if (mapType == 2)
-					UIManager::printUserRatings(orderedUsernames[user1], 2);
+					UIManager::printUserRatings(orderedUsernames[user1], 3);
 				break;
 
 			case 3: // compare
@@ -272,11 +272,11 @@ int main() {
 				// calculate and display comparison
 				if (mapType == 1) {
 					std::pair<ReviewList, ReviewList> gamesInCommon = unorderedUsernames[user1].getIntersection(unorderedUsernames[user2]);
-					UIManager::printRatingComparison(gamesInCommon.first, gamesInCommon.second, 1);
+					UIManager::printRatingComparison(gamesInCommon.first, gamesInCommon.second, 2);
 				}
 				else if (mapType == 2) {
 					std::pair<ReviewList, ReviewList> gamesInCommon = orderedUsernames[user1].getIntersection(orderedUsernames[user2]);
-					UIManager::printRatingComparison(gamesInCommon.first, gamesInCommon.second, 1);
+					UIManager::printRatingComparison(gamesInCommon.first, gamesInCommon.second, 2);
 
 				}
 				

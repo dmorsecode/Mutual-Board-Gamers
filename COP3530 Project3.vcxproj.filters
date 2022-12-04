@@ -10,5 +10,6 @@
     <ClInclude Include="indicators\cursor_control.hpp" />
     <ClInclude Include="mbg\ReviewList.h" />
     <ClInclude Include="mbg\UIManager.h" />
+    <ClInclude Include="tabulate\tabulate.hpp" />
   </ItemGroup>
 </Project>
