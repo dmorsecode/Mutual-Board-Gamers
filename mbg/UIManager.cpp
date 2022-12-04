@@ -20,8 +20,6 @@ int UIManager::displayPrompts(std::vector<std::string> prompts)
 }
 
 int UIManager::getIntInput(int min, int max) {
-	cin.clear();
-	cin.ignore(256, '\n');
 	cout << "> ";
 	int result;
 
@@ -37,13 +35,14 @@ int UIManager::getIntInput(int min, int max) {
 
 	cout << endl;
 
+	cin.clear();
+	cin.ignore(256, '\n');
+
 	return result;
 }
 
 std::string UIManager::getStringInput(std::string prompt)
 {
-	cin.clear();
-	cin.ignore(256, '\n');
 	cout << prompt << endl;
 	cout << "> ";
 
@@ -65,10 +64,8 @@ std::string UIManager::getStringInput(std::string prompt)
 
 int UIManager::getIntInput(std::string prompt, int min, int max, int defaultEntry, int defaultValue)
 {
-	cin.clear();
-	cin.ignore(256, '\n');
 	cout << prompt << endl;
-	cout << "[" << min << "-" << max << "] (enter " << defaultEntry << " for " << defaultValue << ")" << endl;
+	cout << "[" << min << " - " << max << "] ( enter " << defaultEntry << " for " << defaultValue << " )" << endl;
 
 	cout << "> ";
 	int result;
@@ -92,10 +89,8 @@ int UIManager::getIntInput(std::string prompt, int min, int max, int defaultEntr
 
 int UIManager::getIntInput(std::string prompt, int min, int max)
 {
-	cin.clear();
-	cin.ignore(256, '\n');
 	cout << prompt << endl;
-	cout << "[" << min << "-" << max << "]" << endl;
+	cout << "[" << min << " - " << max << "]" << endl;
 
 	string entry;
 
@@ -119,8 +114,6 @@ int UIManager::getIntInput(std::string prompt, int min, int max)
 
 bool UIManager::getBoolInput(string prompt)
 {
-	cin.clear();
-	cin.ignore(256, '\n');
 	cout << prompt << " [Y/N]" << endl;
 	string result;
 
@@ -183,6 +176,11 @@ void UIManager::printUserRatings(ReviewList user, int sort)
 		.font_align(tabulate::FontAlign::center)
 		.font_style({ tabulate::FontStyle::underline });
 
+	if (user.getSize() == 0) {
+		cout << "No reviews found." << endl;
+		return;
+	}
+
 	for (int i = 0; i < user.getSize(); i++) {
 		userRatings.add_row({ 
 			user.getReviews()[i].gameName,
@@ -197,6 +195,10 @@ void UIManager::printUserRatings(ReviewList user, int sort)
 
 void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, int sort)
 {
+	if (user1.getSize() == 0 || user2.getSize() == 0) {
+		cout << "No reviews in common found." << endl << endl;
+		return;
+	}
 
 	if (user1.getSortType() != sort) {
 		user1.setSortType(sort);
@@ -210,13 +212,15 @@ void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, int so
 	
 	Table userRatingsCompare;
 
-	userRatingsCompare.add_row({ "Game", "Rating", "Rating", "Compatibility"});
+	userRatingsCompare.add_row({ "Game", "Rating (" + user1.getUsername() + ")", "Rating (" + user2.getUsername() + ")", "Compatibility"});
 
 	userRatingsCompare[0].format()
 		.padding_top(1)
 		.padding_bottom(1)
 		.font_align(tabulate::FontAlign::center)
 		.font_style({ tabulate::FontStyle::underline });
+
+	
 
 	for (int i = 0; i < user1.getSize(); i++) {
 		userRatingsCompare.add_row({ 

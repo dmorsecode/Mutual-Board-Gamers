@@ -30,6 +30,16 @@ void ReviewList::setSortType(int _sortType)
     sortType = _sortType;
 }
 
+std::string ReviewList::getUsername()
+{
+	return username;
+}
+
+void ReviewList::setUsername(std::string _username)
+{
+	username = _username;
+}
+
 void ReviewList::addReview(int gameID, std::string gameName, float rating, std::string comment)
 {
 	reviews.push_back(ReviewItem(gameID, gameName, rating, comment));

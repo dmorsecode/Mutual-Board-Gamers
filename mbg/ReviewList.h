@@ -27,6 +27,7 @@ class ReviewList {
 			this->rating = rating;
 		}
 	};
+	std::string username = "";
 	std::vector<ReviewItem> reviews;
 	int sortTime = 0;
 	std::string sortMethod;
@@ -39,6 +40,8 @@ public:
 	std::vector<ReviewItem>& getReviews();
 	int getSortType();
 	void setSortType(int sortType);
+	std::string getUsername();
+	void setUsername(std::string username);
 	void addReview(int gameID, std::string gameName, float rating, std::string comment);
 	void addReview(int gameID, std::string gameName, float rating);
 	void addReview(ReviewItem review);

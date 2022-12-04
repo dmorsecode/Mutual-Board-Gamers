@@ -31,7 +31,7 @@ int main() {
 	
 
 	// get number of records to load
-	int entries = UIManager::getIntInput("How many entries would you like to load?", 1, 18964806, 0, 18964806);
+	int entries = UIManager::getIntInput("How many entries would you like to load?", 100, 18964806, 0, 18964806);
 	
 	// include review text or not
 	bool includeText = UIManager::getBoolInput("Do you want to include the review text?");
@@ -72,18 +72,25 @@ int main() {
 		if (mapType == 1) {
 			if (includeText) {
 				unorderedUsernames[user].addReview(gameID, gameName, rating, comment);
+				unorderedUsernames[user].setUsername(user);
 			}
 			else {
 				unorderedUsernames[user].addReview(gameID, gameName, rating);
+				unorderedUsernames[user].setUsername(user);
 			}
+			
 		}
 		else if (mapType == 2) {
+			
 			if (includeText) {
 				orderedUsernames[user].addReview(gameID, gameName, rating, comment);
+				orderedUsernames[user].setUsername(user);
 			}
 			else {
 				orderedUsernames[user].addReview(gameID, gameName, rating);
+				orderedUsernames[user].setUsername(user);
 			}
+			
 		}
 		else {
 			std::cout << "Invalid map type." << std::endl;
