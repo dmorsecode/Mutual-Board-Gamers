@@ -346,7 +346,7 @@ void ReviewList::shuffle()
 
 std::pair<ReviewList, ReviewList> ReviewList::getIntersection(ReviewList& rhs)
 {
-	ReviewList& smaller = getSize() < rhs.getSize() ? *this : rhs;
+	ReviewList& smaller = getSize() <= rhs.getSize() ? *this : rhs;
 	ReviewList& larger = getSize() > rhs.getSize() ? *this : rhs;
 
 	ReviewList returnListS;

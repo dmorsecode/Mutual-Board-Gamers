@@ -14,7 +14,7 @@ public:
 	static int displayMainMenu();
 	static int displayUserMenu(std::string selectedUser);
 
-	static void printUserRatings(ReviewList user, int sort = 1);
+	static void printUserRatings(ReviewList user, bool comments);
 	static void printRatingComparison(ReviewList user1, ReviewList user2, std::pair<std::string, std::string> names);
 };
 

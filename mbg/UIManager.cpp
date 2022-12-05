@@ -161,11 +161,16 @@ int UIManager::displayUserMenu(std::string selectedUser)
 	return displayPrompts(prompts);
 }
 
-void UIManager::printUserRatings(ReviewList user, int sort)
+void UIManager::printUserRatings(ReviewList user, bool comments)
 {	
 	Table userRatings;
 	
-	userRatings.add_row({ "Game", "Rating" });
+	if (comments) {
+		userRatings.add_row({ "Game", "Rating", "Comment" });
+	}
+	else {
+		userRatings.add_row({ "Game", "Rating" });
+	}
 	userRatings[0].format()
 		.padding_top(1)
 		.padding_bottom(1)
@@ -182,7 +187,12 @@ void UIManager::printUserRatings(ReviewList user, int sort)
 		if (rating == "10.") {
 			rating = "10.0";
 		}
-		userRatings.add_row({user.getReviews()[i].gameName, rating });
+		if (comments) {
+			userRatings.add_row({ user.getReviews()[i].gameName, rating, user.getReviews()[i].comment });
+		}
+		else {
+			userRatings.add_row({ user.getReviews()[i].gameName, rating });
+		}
 	}
 
 	userRatings.print(cout);

@@ -19,7 +19,7 @@ using namespace indicators;
 
 void sortReviews(int& sortType, int mapType, std::unordered_map<std::string, ReviewList>& unorderedUsernames, std::map<std::string, ReviewList>& orderedUsernames) {
 	sortType = UIManager::getIntInput("Would you like to sort reviews by game ID (1), game name (2), or rating (3)?", 1, 3);
-	
+
 	// New progress bar to track sorts
 	ProgressBar bar2;
 	bar2.set_option(option::BarWidth{ 50 });
@@ -36,7 +36,7 @@ void sortReviews(int& sortType, int mapType, std::unordered_map<std::string, Rev
 	bar2.set_option(option::MaxProgress{ 100 });
 	indicators::show_console_cursor(false);
 
-	
+
 	auto start = std::chrono::high_resolution_clock::now();
 	int userCount = 0;
 	if (mapType == 1) {
@@ -80,22 +80,23 @@ int main() {
 	// unordered map
 	std::unordered_map<std::string, ReviewList> unorderedUsernames;
 
-    // ordered map
+	// ordered map
 	std::map<std::string, ReviewList> orderedUsernames;
 
 	int sortType;
 
 	//CSVReader reader("user_ratings.csv");
 	CSVReader reader("bgg-19m-reviews.csv");
-    CSVRow row;
-	
+	CSVRow row;
+
 
 	// get number of records to load
 	int entries = UIManager::getIntInput("How many entries would you like to load?", 100, 18964806, 0, 18964806);
-	
+
 	// include review text or not
-	bool includeText = UIManager::getBoolInput("Do you want to include the review text?");
-	
+	//bool includeText = UIManager::getBoolInput("Do you want to include the review text?");
+	bool includeText = false;
+
 	// ask which map type the user wants to use
 	int mapType = UIManager::getIntInput("Do you want to use an unordered map (1) or an ordered map (2)?", 1, 2);
 
@@ -138,10 +139,10 @@ int main() {
 				unorderedUsernames[user].addReview(gameID, gameName, rating);
 				unorderedUsernames[user].setUsername(user);
 			}
-			
+
 		}
 		else if (mapType == 2) {
-			
+
 			if (includeText) {
 				orderedUsernames[user].addReview(gameID, gameName, rating, comment);
 				orderedUsernames[user].setUsername(user);
@@ -150,7 +151,7 @@ int main() {
 				orderedUsernames[user].addReview(gameID, gameName, rating);
 				orderedUsernames[user].setUsername(user);
 			}
-			
+
 		}
 		else {
 			std::cout << "Invalid map type." << std::endl;
@@ -175,7 +176,7 @@ int main() {
 	std::cout << std::endl;
 
 	sortReviews(sortType, mapType, unorderedUsernames, orderedUsernames);
-		
+
 	bool exit = false;
 	bool changeMenu = false;
 
@@ -184,9 +185,9 @@ int main() {
 	while (exit == false) {
 
 		// main menu (no selected user)
-		if (user1 == "") { 
+		if (user1 == "") {
 			int uiChoice = UIManager::displayMainMenu();
-			
+
 			switch (uiChoice) {
 			case 1: // find user
 				user1 = UIManager::getStringInput("Enter a username:");
@@ -196,7 +197,7 @@ int main() {
 						user1 = "";
 					}
 				}
-				else if(mapType == 2) {
+				else if (mapType == 2) {
 					if (orderedUsernames.find(user1) == orderedUsernames.end()) {
 						std::cout << "User not found" << std::endl;
 						user1 = "";
@@ -241,12 +242,12 @@ int main() {
 			int uiChoice = UIManager::displayUserMenu(user1);
 
 			switch (uiChoice) {
-			case 1: // display reviews by name
-				
+			case 1: // display reviews
+
 				if (mapType == 1)
-					UIManager::printUserRatings(unorderedUsernames[user1], 2);
-				else if (mapType == 2) 
-					UIManager::printUserRatings(orderedUsernames[user1], 2);
+					UIManager::printUserRatings(unorderedUsernames[user1], includeText);
+				else if (mapType == 2)
+					UIManager::printUserRatings(orderedUsernames[user1], includeText);
 				break;
 
 			case 2: // compare with specific user
@@ -282,7 +283,7 @@ int main() {
 				//reset user2
 				user2 = "";
 			}
-				break;
+			break;
 
 			case 3: // compare with random user
 			{
@@ -296,7 +297,7 @@ int main() {
 					// check we haven't taken longer than 5 seconds
 					auto end = std::chrono::high_resolution_clock::now();
 					std::chrono::duration<double> elapsed = end - start;
-					if (elapsed.count() > 5) {
+					if (elapsed.count() > 2.5) {
 						std::cout << "Could not find a user to compare with." << std::endl;
 						unfound = true;
 						break;
@@ -335,14 +336,14 @@ int main() {
 				//reset user2
 				user2 = "";
 			}
-				break;
-			
+			break;
+
 			case 4: // go back
 				user1 = "";
 				break;
 			}
 		}
-				
+
 	}
 
 	return 0;
