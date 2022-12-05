@@ -219,7 +219,7 @@ void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, std::p
 		return;
 	}
 
-	std::vector<float> compatList;
+	std::vector<double> compatList;
 
 	for (int i = 0; i < user1.getSize(); i++) {
 		string user1rating = std::to_string(user1.getReviews()[i].rating + 0.05).substr(0, 3);
@@ -234,7 +234,7 @@ void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, std::p
 		if (compat[0] == '-') {
 			compat += '0';
 		}
-		compatList.push_back(stof(compat));
+		compatList.push_back(stod(compat));
 		userRatingsCompare.add_row({ 
 			user1.getReviews()[i].gameName, 
 			user1rating, 
@@ -248,11 +248,11 @@ void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, std::p
 			"",
 			"" });
 	// calculate average compatibility
-	float sum = 0;
+	double sum = 0;
 	for (int i = 0; i < compatList.size(); i++) {
 		sum += compatList[i];
 	}
-	float avg = sum / compatList.size();
+	double avg = sum / compatList.size();
 	string avgStr = std::to_string(avg + 0.05).substr(0, 3);
 	if (avgStr[0] == '-') {
 		avgStr += '0';
