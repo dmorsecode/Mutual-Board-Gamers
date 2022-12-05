@@ -219,21 +219,49 @@ void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, std::p
 		return;
 	}
 
+	std::vector<float> compatList;
+
 	for (int i = 0; i < user1.getSize(); i++) {
 		string user1rating = std::to_string(user1.getReviews()[i].rating + 0.05).substr(0, 3);
 		string user2rating = std::to_string(user2.getReviews()[i].rating + 0.05).substr(0, 3);
+		string compat = std::to_string(5.0 - abs(user1.getReviews()[i].rating - user2.getReviews()[i].rating) + 0.05).substr(0, 3);
 		if (user1rating == "10.") {
 			user1rating = "10.0";
 		}
 		if (user2rating == "10.") {
 			user2rating = "10.0";
 		}
+		if (compat[0] == '-') {
+			compat += '0';
+		}
+		compatList.push_back(stof(compat));
 		userRatingsCompare.add_row({ 
 			user1.getReviews()[i].gameName, 
 			user1rating, 
 			user2rating,
-			std::to_string(5.0 - abs(user1.getReviews()[i].rating - user2.getReviews()[i].rating) + 0.05).substr(0,3)});
+			compat});
 	}
+
+	userRatingsCompare.add_row({
+			"",
+			"",
+			"",
+			"" });
+	// calculate average compatibility
+	float sum = 0;
+	for (int i = 0; i < compatList.size(); i++) {
+		sum += compatList[i];
+	}
+	float avg = sum / compatList.size();
+	string avgStr = std::to_string(avg + 0.05).substr(0, 3);
+	if (avgStr[0] == '-') {
+		avgStr += '0';
+	}
+	userRatingsCompare.add_row({
+		"OVERALL COMPATIBILITY",
+		"",
+		"",
+		avgStr });
 
 	userRatingsCompare.print(cout);
 
