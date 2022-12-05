@@ -140,8 +140,9 @@ int UIManager::displayMainMenu()
 
 	cout << "Main Menu" << endl;
 
-	prompts.push_back("View a random user's reviews");
-	prompts.push_back("View a specific user's reviews");
+	prompts.push_back("View a specific user.");
+	prompts.push_back("View a random user.");
+	prompts.push_back("Change sorting method.");
 	prompts.push_back("Exit");
 
 	return displayPrompts(prompts);
@@ -152,21 +153,16 @@ int UIManager::displayUserMenu(std::string selectedUser)
 	cout << "User Menu: " << selectedUser << endl;
 
 	std::vector<string> prompts;
-	prompts.push_back("Show " + selectedUser + "'s reviews by name");
-	prompts.push_back("Show " + selectedUser + "'s reviews by rating");
-	prompts.push_back("Compare with second user");
+	prompts.push_back("Show " + selectedUser + "'s reviews.");
+	prompts.push_back("Compare with specific user.");
+	prompts.push_back("Compare with random user.");
 	prompts.push_back("Go back to main menu");
 
 	return displayPrompts(prompts);
 }
 
 void UIManager::printUserRatings(ReviewList user, int sort)
-{
-	if (user.getSortType() != sort) {
-		user.setSortType(sort);
-		user.quickSort();
-	}
-	
+{	
 	Table userRatings;
 	
 	userRatings.add_row({ "Game", "Rating" });
@@ -182,9 +178,11 @@ void UIManager::printUserRatings(ReviewList user, int sort)
 	}
 
 	for (int i = 0; i < user.getSize(); i++) {
-		userRatings.add_row({ 
-			user.getReviews()[i].gameName,
-			std::to_string(user.getReviews()[i].rating + 0.05).substr(0,3) });
+		string rating = std::to_string(user.getReviews()[i].rating + 0.05).substr(0, 3);
+		if (rating == "10.") {
+			rating = "10.0";
+		}
+		userRatings.add_row({user.getReviews()[i].gameName, rating });
 	}
 
 	userRatings.print(cout);
@@ -193,26 +191,12 @@ void UIManager::printUserRatings(ReviewList user, int sort)
 
 }
 
-void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, int sort)
+void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, std::pair<string, string> names)
 {
-	if (user1.getSize() == 0 || user2.getSize() == 0) {
-		cout << "No reviews in common found." << endl << endl;
-		return;
-	}
-
-	if (user1.getSortType() != sort) {
-		user1.setSortType(sort);
-		user1.quickSort();
-	}
-
-	if (user2.getSortType() != sort) {
-		user2.setSortType(sort);
-		user2.quickSort();
-	}
 	
 	Table userRatingsCompare;
 
-	userRatingsCompare.add_row({ "Game", "Rating (" + user1.getUsername() + ")", "Rating (" + user2.getUsername() + ")", "Compatibility"});
+	userRatingsCompare.add_row({ "Game", "Rating (" + names.first + ")", "Rating (" + names.second + ")", "Compatibility"});
 
 	userRatingsCompare[0].format()
 		.padding_top(1)
@@ -220,13 +204,24 @@ void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, int so
 		.font_align(tabulate::FontAlign::center)
 		.font_style({ tabulate::FontStyle::underline });
 
-	
+	if (user1.getSize() == 0 || user2.getSize() == 0) {
+		cout << "No reviews in common found." << endl << endl;
+		return;
+	}
 
 	for (int i = 0; i < user1.getSize(); i++) {
+		string user1rating = std::to_string(user1.getReviews()[i].rating + 0.05).substr(0, 3);
+		string user2rating = std::to_string(user2.getReviews()[i].rating + 0.05).substr(0, 3);
+		if (user1rating == "10.") {
+			user1rating = "10.0";
+		}
+		if (user2rating == "10.") {
+			user2rating = "10.0";
+		}
 		userRatingsCompare.add_row({ 
 			user1.getReviews()[i].gameName, 
-			std::to_string(user1.getReviews()[i].rating + 0.05).substr(0,3), 
-			std::to_string(user2.getReviews()[i].rating + 0.05).substr(0,3), 
+			user1rating, 
+			user2rating,
 			std::to_string(5.0 - abs(user1.getReviews()[i].rating - user2.getReviews()[i].rating) + 0.05).substr(0,3)});
 	}
 

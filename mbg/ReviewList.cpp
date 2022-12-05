@@ -61,44 +61,53 @@ int ReviewList::findIndex(ReviewItem& game)
 	// If the sort type is 1, then sort by gameID.
 	// If the sort type is 2, then sort by gameName.
 	// If the sort type is 3, then... unfortunately, we need a linear search.
+	int index = -1;
 	if (sortType == 3) {
 		for (int i = 0; i < reviews.size(); i++) {
 			if (reviews[i].gameID == game.gameID && reviews[i].gameName == game.gameName) {
-				return i;
+				index = i;
+				break;
 			}
 		}
-		return -1;
+		return index;
 	}
-	int left = 0;
-	int right = reviews.size() - 1;
-	int mid = 0;
-	while (left <= right) {
-		mid = (left + right) / 2;
-		if (sortType == 1) {
-			if (game.gameID == reviews[mid].gameID) {
-				return mid;
+	if (sortType == 1) {
+		// binary search by gameID
+		int left = 0;
+		int right = reviews.size() - 1;
+		while (left <= right) {
+			int mid = (left + right) / 2;
+			if (reviews[mid].gameID == game.gameID) {
+				index = mid;
+				break;
 			}
-			else if (game.gameID < reviews[mid].gameID) {
-				right = mid - 1;
-			}
-			else {
+			else if (reviews[mid].gameID < game.gameID) {
 				left = mid + 1;
 			}
-		}
-		else if (sortType == 2) {
-			if (game.gameName == reviews[mid].gameName) {
-				return mid;
-			}
-			else if (game.gameName < reviews[mid].gameName) {
-				right = mid - 1;
-			}
 			else {
-				left = mid + 1;
+				right = mid - 1;
 			}
 		}
 	}
-	// If not found, return -1.
-	return -1;
+	else if (sortType == 2) {
+		// binary search by gameName
+		int left = 0;
+		int right = reviews.size() - 1;
+		while (left <= right) {
+			int mid = (left + right) / 2;
+			if (reviews[mid].gameName == game.gameName) {
+				index = mid;
+				break;
+			}
+			else if (reviews[mid].gameName < game.gameName) {
+				left = mid + 1;
+			}
+			else {
+				right = mid - 1;
+			}
+		}
+	}
+	return index;
 }
 
 ReviewList::ReviewItem ReviewList::getIndex(int index)
