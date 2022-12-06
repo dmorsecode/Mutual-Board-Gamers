@@ -22,7 +22,7 @@ void sortReviews(int& sortType, int mapType, std::unordered_map<std::string, Rev
 
 	// New progress bar to track sorts
 	ProgressBar bar2;
-	bar2.set_option(option::BarWidth{ 50 });
+	bar2.set_option(option::BarWidth{ 100 });
 	bar2.set_option(option::Start{ "[" });
 	bar2.set_option(option::Fill{ "=" });
 	bar2.set_option(option::Lead{ "=" });
@@ -41,10 +41,10 @@ void sortReviews(int& sortType, int mapType, std::unordered_map<std::string, Rev
 	int userCount = 0;
 	if (mapType == 1) {
 		for (auto& user : unorderedUsernames) {
-			user.second.setSortType(sortType);
+			user.second.setSortType(sortType); // Store the sort type in a class member so it can be used internally.
 			user.second.quickSort();
-			userCount++;
-			if (userCount % (unorderedUsernames.size() / 100) == 0) {
+			userCount++; // This just tracks how many usernames are in the data.
+			if (userCount % (unorderedUsernames.size() / 100) == 0) { // Again, increment every 1%.
 				// make sure bar isnt completed first
 				if (bar2.current() != 100) {
 					bar2.tick();
@@ -93,7 +93,7 @@ int main() {
 	// get number of records to load
 	int entries = UIManager::getIntInput("How many entries would you like to load?", 100, 18964806, 0, 18964806);
 
-	// include review text or not
+	// This line would have asked if we wanted to include review text or not, but we decided to hardcode it to false.
 	//bool includeText = UIManager::getBoolInput("Do you want to include the review text?");
 	bool includeText = false;
 
@@ -102,9 +102,9 @@ int main() {
 
 
 
-	// progress bar
+	// Set up the progress bar.
 	ProgressBar bar;
-	bar.set_option(option::BarWidth{ 50 });
+	bar.set_option(option::BarWidth{ 100 });
 	bar.set_option(option::Start{ "[" });
 	bar.set_option(option::Fill{ "=" });
 	bar.set_option(option::Lead{ "=" });
@@ -124,16 +124,18 @@ int main() {
 	// start chrono timer to track how long it takes to create the map
 	auto start = std::chrono::high_resolution_clock::now();
 	for (auto& row : reader) {
+		// The following five lines pick each variable based on the column headers in the csv.
 		std::string user = row["user"].get<>();
 		int gameID = row["ID"].get<int>();
 		std::string gameName = row["name"].get<>();
 		float rating = row["rating"].get<float>();
 		std::string comment = row["comment"].get<>();
 
-		if (mapType == 1) {
+		if (mapType == 1) { // Check whether the user selected an unordered or ordered map first, no need to fill an unnecessary map.
 			if (includeText) {
 				unorderedUsernames[user].addReview(gameID, gameName, rating, comment);
 				unorderedUsernames[user].setUsername(user);
+				// The [] operator will place a new element there if it doesn't exist already, so we don't waste time with a .find() check first.
 			}
 			else {
 				unorderedUsernames[user].addReview(gameID, gameName, rating);
@@ -141,7 +143,7 @@ int main() {
 			}
 
 		}
-		else if (mapType == 2) {
+		else if (mapType == 2) { // This is the same, just for an ordered map choice instead.
 
 			if (includeText) {
 				orderedUsernames[user].addReview(gameID, gameName, rating, comment);
@@ -153,18 +155,18 @@ int main() {
 			}
 
 		}
-		else {
+		else { // Failsafe in case something goes wrong with the map choice input.
 			std::cout << "Invalid map type." << std::endl;
 			return 0;
 		}
 		i++;
-		if (i % (entries / 100) == 0) {
+		if (i % (entries / 100) == 0) { // Every time we finish 1% of the total reviews, we increase the progress bar by 1%.
 			// make sure bar isnt completed first
 			if (bar.current() != 100) {
-				bar.tick();
+				bar.tick(); // tick() always increments by a single percent.
 			}
 		}
-		// break after i = entries
+		// break after i = entries so we don't load more than the user asked for.
 		if (i >= entries) break;
 	}
 	std::cout << std::endl;
@@ -287,14 +289,16 @@ int main() {
 
 			case 3: // compare with random user
 			{
-				// start a timer to make sure we don't take too long
 				bool unfound = false; // Track whether or not we gave up due to not finding anyone with comparable reviews.
+				
+				// This timer is to make sure we don't take too long to find someone and end up making the user wait potentially forever.
 				auto start = std::chrono::high_resolution_clock::now();
+
 				std::pair<ReviewList, ReviewList> gamesInCommon;
 				std::random_device rd;
 				std::mt19937 gen(rd());
 				while (user2 == "") {
-					// check we haven't taken longer than 5 seconds
+					// check we haven't taken longer than 2.5 seconds (just seemed like a good amount of time to use)
 					auto end = std::chrono::high_resolution_clock::now();
 					std::chrono::duration<double> elapsed = end - start;
 					if (elapsed.count() > 2.5) {
@@ -317,7 +321,7 @@ int main() {
 						user2 = it->first;
 					}
 					gamesInCommon = unorderedUsernames[user1].getIntersection(unorderedUsernames[user2]);
-					// check if they have none in common. if so, we need to reroll
+					// check if they have any games in common. if they don't, we need to reroll
 					if (gamesInCommon.first.getSize() == 0 || gamesInCommon.second.getSize() == 0) {
 						user2 = "";
 					}

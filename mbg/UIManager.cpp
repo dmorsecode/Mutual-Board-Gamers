@@ -242,18 +242,19 @@ void UIManager::printRatingComparison(ReviewList user1, ReviewList user2, std::p
 			compat});
 	}
 
-	userRatingsCompare.add_row({
+	userRatingsCompare.add_row({ // Add a spacer.
 			"",
 			"",
 			"",
 			"" });
+	
 	// calculate average compatibility
 	double sum = 0;
 	for (int i = 0; i < compatList.size(); i++) {
 		sum += compatList[i];
 	}
 	double avg = sum / compatList.size();
-	string avgStr = std::to_string(avg + 0.05).substr(0, 3);
+	string avgStr = std::to_string(avg + 0.05).substr(0, 3); // Fix it to 1 decimal place.
 	if (avgStr[0] == '-') {
 		avgStr += '0';
 	}

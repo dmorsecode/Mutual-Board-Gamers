@@ -7,7 +7,7 @@
 
 ReviewList::ReviewList()
 {
-	return;
+	return; // No need for a proper default constructor.
 }
 
 int ReviewList::getSize()
@@ -115,10 +115,9 @@ ReviewList::ReviewItem ReviewList::getIndex(int index)
 	return reviews[index];
 }
 
-void ReviewList::printReviews()
+void ReviewList::printReviews() // UNUSED IN FINAL PRODUCT
 {
 	for (int i = 0; i < reviews.size(); i++) {
-        // Moved this std::endl to the top of the for loop for it to print cleaner
         std::cout << std::endl;
 		std::cout << "Game: " << reviews[i].gameName << " (" << reviews[i].gameID << ")" << std::endl;
 		std::cout << "Rating: " << reviews[i].rating << std::endl;
@@ -126,7 +125,7 @@ void ReviewList::printReviews()
 	}
 }
 
-void ReviewList::countingSort()
+void ReviewList::countingSort() // UNUSED IN FINAL PRODUCT
 {	
 	// start timer for sort
 	auto start = std::chrono::high_resolution_clock::now();
@@ -178,12 +177,14 @@ void ReviewList::quickSort() {
 	// start timer for sort
 	auto start = std::chrono::high_resolution_clock::now();
 	
+	// Call the recursive version.
 	quickSort(0, reviews.size() - 1);
 
 	// stop timer for sort
 	auto stop = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 	sortTime = duration.count();
+	
 	// if count is too small, change to microseconds
 	if (sortTime == 0) {
 		auto newDuration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -193,13 +194,13 @@ void ReviewList::quickSort() {
 	else {
 		sortSuffix = "milliseconds";
 	}
-	sortMethod = "Quick Sort";
+	sortMethod = "Quick Sort"; // Just keeps track of what was used for printing to console later.
 }
 
 void ReviewList::quickSort(int left, int right) {
 	int i = left, j = right;
 	if (sortType == 1) {
-		// Quicksort by game ID ascending
+		// Quicksort by game ID ascending. Use the middle element as a pivot.
 		int pivot = reviews[(left + right) / 2].gameID;
 		while (i <= j) {
 			while (reviews[i].gameID < pivot) {
@@ -275,7 +276,7 @@ void ReviewList::quickSort(int left, int right) {
 	}
 }
 
-void ReviewList::radixSort()
+void ReviewList::radixSort() // UNUSED IN FINAL PRODUCT
 {
 	// start timer for sort
 	auto start = std::chrono::high_resolution_clock::now();
@@ -330,13 +331,13 @@ void ReviewList::radixSort()
 	sortMethod = "Radix Sort";
 }
 
-void ReviewList::printSortTime()
+void ReviewList::printSortTime() // UNUSED IN FINAL PRODUCT
 {
 	// print method and time
 	std::cout << sortMethod << " took " << sortTime << " " << sortSuffix << " to sort " << reviews.size() << " reviews." << std::endl;
 }
 
-void ReviewList::shuffle()
+void ReviewList::shuffle() // UNUSED IN FINAL PRODUCT
 {
 	// Shuffles the ReviewItem vector.
 	std::random_device rd;
@@ -346,6 +347,7 @@ void ReviewList::shuffle()
 
 std::pair<ReviewList, ReviewList> ReviewList::getIntersection(ReviewList& rhs)
 {
+	// We wanna know which one is smaller bc we only need to loop over the smaller list to find all the ones in common.
 	ReviewList& smaller = getSize() <= rhs.getSize() ? *this : rhs;
 	ReviewList& larger = getSize() > rhs.getSize() ? *this : rhs;
 
@@ -363,7 +365,7 @@ std::pair<ReviewList, ReviewList> ReviewList::getIntersection(ReviewList& rhs)
 		}
 	}
 
-	// return in correct order 
+	// Make sure to return them in the correct original so the order user is still in the left column.
 	if (getSize() < rhs.getSize())
 		return std::pair<ReviewList, ReviewList>(returnListS, returnListL);
 	else
